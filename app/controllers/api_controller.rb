@@ -12,7 +12,11 @@ class ApiController < ApplicationController
     #
     # Ref: http://isithackday.com/arrpi.php?
     #================================================
-    @result = "Replace this string with your answer"
+    text = URI.encode(params[:text])
+    url = "http://isithackday.com/arrpi.php?text=#{text}&format=json"
+    result = open(url).read
+    parsed_result = JSON.parse(result)
+    @result = parsed_result['translation']['pirate']
   end
 
 
