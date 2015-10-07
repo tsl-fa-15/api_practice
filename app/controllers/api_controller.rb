@@ -108,5 +108,19 @@ class ApiController < ApplicationController
     #
     # Ref: http://www.divvybikes.com/stations/json/
     #================================================
+
+    result = open("http://www.divvybikes.com/stations/json/").read
+    parsed_result = JSON.parse(result)
+    @stations = []
+    parsed_result['stationBeanList'].each do |station_hash|
+      if station_hash['availableBikes'] >= 5
+        @stations << "#{station_hash['stationName']} - #{station_hash['availableBikes']} bikes"
+      end
+    end
   end
 end
+
+
+
+
+
