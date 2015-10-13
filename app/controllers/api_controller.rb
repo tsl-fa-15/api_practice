@@ -109,14 +109,32 @@ class ApiController < ApplicationController
     # Ref: http://www.divvybikes.com/stations/json/
     #================================================
 
-    result = open("http://www.divvybikes.com/stations/json/").read
-    parsed_result = JSON.parse(result)
-    @stations = []
-    parsed_result['stationBeanList'].each do |station_hash|
-      if station_hash['availableBikes'] >= 5
-        @stations << "#{station_hash['stationName']} - #{station_hash['availableBikes']} bikes"
-      end
+    # geocode user address
+    address = "30 N Racine, Chicago"
+    address_url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{address}"
+    address_result = open(address_url).read
+    @parsed_address_result = JSON.parse(address_result)
+    @lat = @parsed_address_result['results'][0]['geometry']['location']['lat']
+    @lng = @parsed_address_result['results'][0]['geometry']['location']['lng']
+
+    stations_result = open("http://www.divvybikes.com/stations/json/").read
+    parsed_stations_result = JSON.parse(stations_result)
+    @station_array = parsed_stations_result['stationBeanList']
+    @sorted_stations = @station_array.sort_by do |station_hash|
+      lat_dist = (@lat - station_hash['latitude']).abs
+      lng_dist = (@lng - station_hash['longitude']).abs
+      Math.sqrt(lat_dist**2 + lng_dist**2)
     end
+
+
+    # result = open("http://www.divvybikes.com/stations/json/").read
+    # parsed_result = JSON.parse(result)
+    # @stations = []
+    # parsed_result['stationBeanList'].each do |station_hash|
+    #   if station_hash['availableBikes'] >= 5
+    #     @stations << "#{station_hash['stationName']} - #{station_hash['availableBikes']} bikes"
+    #   end
+    # end
   end
 end
 

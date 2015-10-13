@@ -1,5 +1,7 @@
+<h1>Sorting by distance from (<%= @lat %>, <%= @lng %>)</h1>
+
 <ul>
-  <% @stations.each do |station_info| %>
-    <li><%= station_info %></li>
+  <% @sorted_stations.each do |station_hash| %>
+    <li><%= station_hash.inspect %></li>
   <% end %>
 </ul>
